@@ -7,23 +7,22 @@ import java.time.LocalTime;
 import org.junit.Assert;
 import org.junit.Test;
 
-
 public class SessaoTest {
-	
+
 	@Test
-	public void oPrecoDaSessaoDeveSerOPrecoDaSalaMaisOPrecoDoFilme(){
-		
+	public void oPrecoDaSessaoDeveSerOPrecoDaSalaMaisOPrecoDoFilme() {
+
 		Sala sala = new Sala("Eldora - IMax", new BigDecimal("22.5"));
-		
-		Filme filme = new Filme("Rouge One", Duration.ofMinutes(120), "SCI-FI", new BigDecimal("12.0"));
-		
-		BigDecimal somaDosPrecosDaSalaEFilme = sala.getPreco().add(filme.getPreco());
-		
+
+		Filme filme = new Filme("Rouge One", Duration.ofMinutes(120), "SCI-FI",
+				new BigDecimal("12.0"));
+
+		BigDecimal somaDosPrecosDaSalaEFilme = sala.getPreco().add(
+				filme.getPreco());
+
 		Sessao sessao = new Sessao(LocalTime.parse("10:00:00"), filme, sala);
-		
-		Assert.assertEquals(somaDosPrecosDaSalaEFilme,  sessao.getPreco() );
+
+		Assert.assertEquals(somaDosPrecosDaSalaEFilme, sessao.getPreco());
 	}
-
-
 
 }
