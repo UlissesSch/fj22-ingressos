@@ -8,4 +8,8 @@ public class DescontoParaEstudantes implements Desconto {
 		return precoOriginal.divide(new BigDecimal("2.0"));
 	}
 
+	public String getDescricao() {
+		return "Desconto Estudante";
+	}
+
 }

@@ -1,16 +1,27 @@
 package br.com.caelum.ingresso.controller;
 
-import br.com.caelum.ingresso.dao.FilmeDao;
-import br.com.caelum.ingresso.model.Filme;
+import java.util.List;
+import java.util.Optional;
+
+import javax.validation.Valid;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
-import javax.validation.Valid;
-import java.util.Optional;
+import br.com.caelum.ingresso.dao.FilmeDao;
+import br.com.caelum.ingresso.dao.SessaoDao;
+import br.com.caelum.ingresso.model.DetalhesDoFilme;
+import br.com.caelum.ingresso.model.Filme;
+import br.com.caelum.ingresso.model.Sessao;
+import br.com.caelum.ingresso.rest.OmdbClient;
 
 /**
  * Created by nando on 03/03/17.
@@ -18,58 +29,83 @@ import java.util.Optional;
 @Controller
 public class FilmeController {
 
+	@Autowired
+	private FilmeDao filmeDao;
+	@Autowired
+	private SessaoDao sessaoDao;
+	@Autowired
+	private OmdbClient client;
 
-    @Autowired
-    private FilmeDao filmeDao;
+	@GetMapping("/filme/{id}/detalhe")
+	public ModelAndView detalhes(@PathVariable("id") Integer id) {
+		ModelAndView modelAndView = new ModelAndView("/filme/detalhe");
 
+		Filme filme = filmeDao.findOne(id);
+		List<Sessao> sessoes = sessaoDao.BuscaSessoesDoFilme(filme);
 
-    @GetMapping({"/admin/filme", "/admin/filme/{id}"})
-    public ModelAndView form(@PathVariable("id") Optional<Integer> id, Filme filme){
+		Optional<DetalhesDoFilme> detalhesDoFilme = client.request(filme,
+				DetalhesDoFilme.class);
 
-        ModelAndView modelAndView = new ModelAndView("filme/filme");
+		modelAndView.addObject("sessoes", sessoes);
+		modelAndView.addObject("detalhes",
+				detalhesDoFilme.orElse(new DetalhesDoFilme()));
 
-        if (id.isPresent()){
-            filme = filmeDao.findOne(id.get());
-        }
+		return modelAndView;
+	}
 
-        modelAndView.addObject("filme", filme);
+	@GetMapping("/filme/em-cartaz")
+	public ModelAndView emCartaz() {
+		ModelAndView modelAndView = new ModelAndView("filme/em-cartaz");
 
-        return modelAndView;
-    }
+		modelAndView.addObject("filmes", filmeDao.findAll());
+		return modelAndView;
+	}
 
+	@GetMapping({ "/admin/filme", "/admin/filme/{id}" })
+	public ModelAndView form(@PathVariable("id") Optional<Integer> id,
+			Filme filme) {
 
-    @PostMapping("/admin/filme")
-    @Transactional
-    public ModelAndView salva(@Valid Filme filme, BindingResult result){
+		ModelAndView modelAndView = new ModelAndView("filme/filme");
 
-        if (result.hasErrors()) {
-            return form(Optional.ofNullable(filme.getId()), filme);
-        }
+		if (id.isPresent()) {
+			filme = filmeDao.findOne(id.get());
+		}
 
-        filmeDao.save(filme);
+		modelAndView.addObject("filme", filme);
 
-        ModelAndView view = new ModelAndView("redirect:/admin/filmes");
+		return modelAndView;
+	}
 
-        return view;
-    }
+	@PostMapping("/admin/filme")
+	@Transactional
+	public ModelAndView salva(@Valid Filme filme, BindingResult result) {
 
+		if (result.hasErrors()) {
+			return form(Optional.ofNullable(filme.getId()), filme);
+		}
 
-    @GetMapping(value="/admin/filmes")
-    public ModelAndView lista(){
+		filmeDao.save(filme);
 
-        ModelAndView modelAndView = new ModelAndView("filme/lista");
+		ModelAndView view = new ModelAndView("redirect:/admin/filmes");
 
-        modelAndView.addObject("filmes", filmeDao.findAll());
+		return view;
+	}
 
-        return modelAndView;
-    }
+	@GetMapping(value = "/admin/filmes")
+	public ModelAndView lista() {
 
+		ModelAndView modelAndView = new ModelAndView("filme/lista");
 
-    @DeleteMapping("/admin/filme/{id}")
-    @ResponseBody
-    @Transactional
-    public void delete(@PathVariable("id") Integer id){
-        filmeDao.delete(id);
-    }
+		modelAndView.addObject("filmes", filmeDao.findAll());
+
+		return modelAndView;
+	}
+
+	@DeleteMapping("/admin/filme/{id}")
+	@ResponseBody
+	@Transactional
+	public void delete(@PathVariable("id") Integer id) {
+		filmeDao.delete(id);
+	}
 
 }

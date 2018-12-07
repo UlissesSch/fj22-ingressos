@@ -37,7 +37,10 @@ public class Filme {
 	}
 
 	public BigDecimal getPreco() {
-		return preco.setScale(2, RoundingMode.HALF_UP);
+		if (preco != null) {
+			return preco.setScale(2, RoundingMode.HALF_UP);			
+		}
+		return preco;
 	}
 	public void setPreco(BigDecimal preco) {
 		this.preco = preco;
