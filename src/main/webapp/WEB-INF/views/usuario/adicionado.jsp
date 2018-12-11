@@ -13,10 +13,10 @@
 
 <ingresso:template>
     <jsp:body>
-        <h3>Usuário criado com sucesso!</h3>
+        <h2>Usuário criado com sucesso!</h2>
 
         <p>
-            Enviamos um e-mail com um link de confirmação para <strong>${usuario.email}</strong>.<br/>
+            Enviamos um e-mail com um link de confirmação para <strong>${email}</strong>.<br/>
 
             Por favor confirme a criação do seu usuário, para liberar seu acesso.
         </p>

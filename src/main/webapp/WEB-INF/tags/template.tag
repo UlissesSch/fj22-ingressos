@@ -43,7 +43,7 @@
 
 
 					<sec:authorize access="isAnonymous() Or hasRole('COMPRADOR')">
-						<li><a href="/compra">Comprar</a></li>
+						<li><a href="/compra">Carrinho de Compras</a></li>
 					</sec:authorize>
 
 					<sec:authorize access="hasRole('COMPRADOR')">
