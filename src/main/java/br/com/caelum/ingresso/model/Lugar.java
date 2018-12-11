@@ -13,7 +13,12 @@ import javax.validation.constraints.NotNull;
 @Entity
 public class Lugar {
 
-    @Id
+    @Override
+	public String toString() {
+		return "Lugar [fileira=" + fileira + ", posicao=" + posicao + "]";
+	}
+
+	@Id
     @GeneratedValue
     private Integer id;
 

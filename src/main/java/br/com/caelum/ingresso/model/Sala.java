@@ -48,7 +48,11 @@ public class Sala {
 	}
 
 	public BigDecimal getPreco() {
-		return preco.setScale(2, RoundingMode.HALF_UP);
+		if (preco != null) {
+			return preco.setScale(2, RoundingMode.HALF_UP);
+		} else {
+			return preco;
+		}
 	}
 
 	public void setPreco(BigDecimal preco) {
@@ -85,6 +89,7 @@ public class Sala {
 
 	public Map<String, List<Lugar>> getMapaDeLugares() {
 		if (!this.lugares.isEmpty()) {
+			System.out.println(lugares);
 			return this.lugares.stream().collect(
 					Collectors.groupingBy(Lugar::getFileira,
 							Collectors.toList()));

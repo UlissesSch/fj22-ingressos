@@ -20,6 +20,13 @@ public class SessaoDao {
 	public Sessao findOne(Integer id) {
 		return manager.find(Sessao.class, id);
 	}
+	
+	public Sessao findOneComSalas(Integer id) {
+		return manager
+				.createQuery("select s from Sessao s join fetch s.sala sala left join fetch sala.lugares where s.id = :id",
+						Sessao.class).setParameter("id", id)
+				.getSingleResult();
+	}
 
 	public void save(Sessao sessao) {
 		manager.persist(sessao);
